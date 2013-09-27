@@ -1,3 +1,4 @@
+require "bundler/setup"
 require "sinatra"
 require "sinatra/multi_route"
 require "data_mapper"
@@ -15,16 +16,18 @@ class VerifiedUser
 
   property :id, Serial
   property :code, String, :length => 10
+  property :name, String
   property :phone_number, String, :length => 30
   property :verified, Boolean, :default => false
+  property :send_mms, Enum[ :yes, :no ], :default => :no
 
 end
 DataMapper.finalize
 DataMapper.auto_upgrade!
 
 before do
-  @twilio_number = ENV['twilio_number']
-  @client = Twilio::REST::Client.new ENV['account_sid'], ENV['auth_token']
+  @twilio_number = ENV['TWILIO_NUMBER']
+  @client = Twilio::REST::Client.new ENV['TWILIO_ACCOUNT_SID'], ENV['TWILIO_AUTH_TOKEN']
 
   if params[:error].nil?
     @error = false
@@ -38,6 +41,12 @@ get "/" do
   erb :index
 end
 
+get '/notify' do
+  Twilio::TwiML::Response.new do |r|
+    r.Say 'The baby is Here!'
+  end.text
+end
+
 route :get, :post, '/register' do
   @phone_number = Sanitize.clean(params[:phone_number])
   if @phone_number.empty?
@@ -46,7 +55,11 @@ route :get, :post, '/register' do
 
   begin
     if @error == false
-      user = VerifiedUser.first_or_create(:phone_number => @phone_number)
+      user = VerifiedUser.create(
+        :name => params[:name],
+        :phone_number => @phone_number,
+        :send_mms => params[:send_mms]
+      )
 
       if user.verified == true
         @phone_number = url_encode(@phone_number)
@@ -66,6 +79,13 @@ route :get, :post, '/register' do
   rescue
     redirect to("/?error=2")
   end
+end
+
+get '/users/' do
+  @users = VerifiedUser.all
+  print @users
+  print VerifiedUser.all.count
+  erb :users
 end
 
 route :get, :post, '/verify' do
