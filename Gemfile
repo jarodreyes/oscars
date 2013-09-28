@@ -8,6 +8,7 @@ gem "sanitize"
 gem "rotp"
 
 gem "data_mapper"
+gem 'newrelic_rpm'
 
 
 group :development do
