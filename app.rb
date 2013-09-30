@@ -9,7 +9,7 @@ require "rotp"
 include ERB::Util
 
 DataMapper::Logger.new(STDOUT, :debug)
-DataMapper::setup(:default, ENV['DATABASE_URL'] || "sqlite3://#{Dir.pwd}/dev.db")
+DataMapper::setup(:default, ENV['DATABASE_URL'] || 'postgres://localhost/baby_notify')
 
 class VerifiedUser
   include DataMapper::Resource
