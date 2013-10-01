@@ -44,6 +44,10 @@ get "/" do
   haml :index
 end
 
+get '/gotime' do
+  haml :gotime
+end
+
 get '/notify' do
   Twilio::TwiML::Response.new do |r|
     r.Say 'The baby is Here!'
@@ -84,10 +88,6 @@ route :get, :post, '/register' do
   end
 end
 
-get '/gotime' do
-  haml :gotime
-end
-
 get '/users/' do
   @users = VerifiedUser.all
   print @users
@@ -104,12 +104,12 @@ route :get, :post, '/notify_all' do
   @weight = params[:weight]
   msg = "Jarod and Sarah have very exciting news! At #{@time} on #{@date} a beautiful little #{@sex} named #{@baby_name} was born. Let the celebrations begin!"
   @users.each do |user|
-
     if user.verified == true
       @phone_number = user.phone_number
       @name = user.name
       if user.send_mms == 'yes'
         pic = "http://www.topdreamer.com/wp-content/uploads/2013/08/funny_babies_faces.jpg"
+      end
       message = @client.account.messages.create(
         :from => @twilio_number,
         :to => @phone_number,
