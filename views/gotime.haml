@@ -1,0 +1,19 @@
+.row
+  .small-12.large-6.small-centered.columns
+    %h3 It's Go Time!!
+    %form.custom{:id => "enter_number", :action => "/notify_all", :method =>"POST"}
+      %input{:type => "text", :name => "baby_name", :id => "baby_name", :placeholder => "baby name"}
+      .row
+        .small-6.columns
+          %label{:for => "boy"}
+            %input{:type => "radio", :name => "sex", :id => "boy", :value => "boy"}
+            Boyish
+        .small-6.columns
+          %label{:for => "girl"}
+            %input{:type => "radio", :name => "sex", :id => "girl", :value => "girl"}
+            Girlish
+      
+      %input{:type => "text", :name => "weight", :id => "weight", :placeholder => "weight"}
+      %input{:type => "text", :name => "date", :id => "date", :placeholder => "today: September 9, 2013"}
+      %input{:type => "text", :name => "time", :id => "time", :placeholder => "time it popped out"}
+      %input.large.button.expand{:type => "submit", :name => "submit", :value => "Notify our peeps"}

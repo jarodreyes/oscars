@@ -1,0 +1,23 @@
+// Normalize non-controls
+//
+// Restyle and baseline non-control form elements.
+
+body {
+  font-family: 'Josefin Sans', sans-serif;
+  font-size:22px;
+  line-height:24px;
+  background-image:url('/img/bg.gif');
+}
+
+.logo {
+  text-align:center;
+  display: block;
+  background: url('/img/logo.png') center -90px no-repeat;
+  height: 240px;
+}
+
+.button.large {  
+  background-color:#5DA3A6;
+  padding:22px 0px;
+  margin-top:20px;
+}

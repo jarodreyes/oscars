@@ -8,6 +8,9 @@ require "erb"
 require "rotp"
 include ERB::Util
 
+set :static, true
+set :root, File.dirname(__FILE__)
+
 DataMapper::Logger.new(STDOUT, :debug)
 DataMapper::setup(:default, ENV['DATABASE_URL'] || 'postgres://localhost/baby_notify')
 
@@ -38,7 +41,7 @@ before do
 end
 
 get "/" do
-  erb :index
+  haml :index
 end
 
 get '/notify' do
@@ -81,11 +84,42 @@ route :get, :post, '/register' do
   end
 end
 
+get '/gotime' do
+  haml :gotime
+end
+
 get '/users/' do
   @users = VerifiedUser.all
   print @users
   print VerifiedUser.all.count
-  erb :users
+  haml :users
+end
+
+route :get, :post, '/notify_all' do
+  @users = VerifiedUser.all
+  @baby_name = params[:baby_name]
+  @time = params[:time]
+  @sex = params[:sex]
+  @date = params[:date]
+  @weight = params[:weight]
+  msg = "Jarod and Sarah have very exciting news! At #{@time} on #{@date} a beautiful little #{@sex} named #{@baby_name} was born. Let the celebrations begin!"
+  @users.each do |user|
+
+    if user.verified == true
+      @phone_number = user.phone_number
+      @name = user.name
+      if user.send_mms == 'yes'
+        pic = "http://www.topdreamer.com/wp-content/uploads/2013/08/funny_babies_faces.jpg"
+      message = @client.account.messages.create(
+        :from => @twilio_number,
+        :to => @phone_number,
+        :body => "#{@name}! #{msg}",
+        :media_url => pic
+      )
+      puts message.to
+    end
+  end
+  return 'Yay'
 end
 
 route :get, :post, '/verify' do
