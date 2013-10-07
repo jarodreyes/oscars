@@ -159,7 +159,7 @@ route :get, :post, '/verify' do
 end
 
 route :get, :post, '/addPhone' do
-  @phone_number = Sanitize.clean(params[:phone_number])
+  @phone_number = Sanitize.clean(params[:From])
   user = VerifiedUser.create(
     :name => 'Twilion',
     :phone_number => @phone_number,
