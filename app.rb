@@ -160,8 +160,14 @@ end
 
 route :get, :post, '/addPhone' do
   @phone_number = Sanitize.clean(params[:From])
+  @name = params[:Body]
+  if @name != ''
+    @nickname = @name
+  else
+    @nickname = 'Twilion'
+  end
   user = VerifiedUser.create(
-    :name => 'Twilion',
+    :name => @nickname,
     :phone_number => @phone_number,
     :send_mms => 1,
     :verified => true,
