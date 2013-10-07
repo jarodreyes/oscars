@@ -174,6 +174,6 @@ route :get, :post, '/addPhone' do
   )
   user.save
   Twilio::TwiML::Response.new do |r|
-    r.Message 'Awesome, you have been added to the Reyes family babynotify.me account.'
+    r.Message 'Awesome, #{@name} at #{@phone_number} you have been added to the Reyes family babynotify.me account.'
   end.text
 end
