@@ -169,7 +169,7 @@ route :get, :post, '/addPhone' do
   user = VerifiedUser.create(
     :name => @nickname,
     :phone_number => @phone_number,
-    :send_mms => 1,
+    :send_mms => 'yes',
     :verified => true,
   )
   user.save
