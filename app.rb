@@ -56,6 +56,16 @@ get '/notify' do
   end.text
 end
 
+get '/hurray' do
+  erb :hurray
+end
+
+get '/success' do
+  haml :success
+end
+
+
+
 route :get, :post, '/register' do
   @phone_number = Sanitize.clean(params[:phone_number])
   if @phone_number.empty?
@@ -114,7 +124,7 @@ route :get, :post, '/notify_all' do
         message = @mmsclient.messages.create(
           :from => 'TWILIO',
           :to => @phone_number,
-          :body => "#{@name}! #{msg}",
+          :body => "Hi #{@name}! #{msg}",
           :media_url => "http://www.topdreamer.com/wp-content/uploads/2013/08/funny_babies_faces.jpg"
         )
       else
@@ -146,4 +156,18 @@ route :get, :post, '/verify' do
     user.save
   end
   erb :verified
+end
+
+route :get, :post, '/addPhone' do
+  @phone_number = Sanitize.clean(params[:phone_number])
+  user = VerifiedUser.create(
+    :name => 'Twilion',
+    :phone_number => @phone_number,
+    :send_mms => 1,
+    :verified => true,
+  )
+  user.save
+  Twilio::TwiML::Response.new do |r|
+    r.Message 'Awesome, you have been added to the Reyes family babynotify.me account.'
+  end.text
 end

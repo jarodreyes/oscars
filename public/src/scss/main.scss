@@ -7,6 +7,9 @@ body {
   font-size:22px;
   line-height:24px;
   background-image:url('/img/bg.gif');
+  position: absolute;
+  height: 100%;
+  width: 100%;
 }
 
 .logo {
@@ -24,4 +27,37 @@ body {
 
 .testing {
   text-align: right;
+}
+
+.hidden {
+  display:none;
+}
+input.code {
+  width:80%;
+}
+.verifyCode {
+  position: relative;
+  .button {
+    display: inline-block;
+    width: 240px;
+    font-size: 17px;
+    vertical-align: top;
+    height: 57px;
+    padding: 20px;
+  }
+  input {
+    width: 260px;
+    display: inline-block;
+  }
+  .alert-box.success {
+    position: absolute;
+    top: 0px;
+    width: 100%;
+  }
+}
+.logo {
+  color: #C1E3E5;
+  font-weight: 100;
+  font-size: 29px;
+  padding-top: 200px;
 }

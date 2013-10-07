@@ -4,11 +4,20 @@
     <meta name="template" content="Banner 1.0.5">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style type="text/css">html,body{width:100%;height:100%;margin:0px;background-image:url('/img/bg.gif');}
+    <style type="text/css">
+    html,body{width:100%;height:100%;margin:0px;background-image:url('/img/bg.gif');}
+    .spinner {
+      top: 330px;
+      margin: 0px auto;
+      width: 100px;
+      position: relative;
+      display: block;
+      z-index: 1;
+    }
 .gwd-page-container{position:relative;width:100%;height:100%;}
 .gwd-page-content{background-color:transparent;-webkit-transform:perspective(1400px) matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);-moz-transform:perspective(1400px) matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);transform:perspective(1400px) matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);-webkit-transform-style:preserve-3d;-moz-transform-style:preserve-3d;transform-style:preserve-3d;position:absolute;}
 .gwd-page-wrapper{-webkit-transform:translateZ(0px);-moz-transform:translateZ(0px);transform:translateZ(0px);}
-.gwd-page-size{width:1024px;height:768px;margin:0px auto;}
+.gwd-page-size{width:1024px;height:768px;margin:0px auto;z-index:2;}
 .gwd-img-sl79{position:absolute;width:394px;height:394px;left:314.5px;top:187px;opacity:0;}
 .gwd-img-010s{position:absolute;width:307px;height:307px;border-width:3px;border-style:none;left:358.5px;top:230px;opacity:0;}
 .gwd-img-5d92{position:absolute;width:153px;height:154px;-webkit-transform-style:preserve-3d;-moz-transform-style:preserve-3d;transform-style:preserve-3d;top:-200.3646180561821px;left:435.8618881097243px;-webkit-transform:matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);-moz-transform:matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);transform:matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);}
@@ -137,6 +146,7 @@ $.target=$.target;$.type=$.type;})();
           <img class="gwd-img-9tqs gwd-gen-x4xggwdanimation gwd-gen-x4xggwdanimation-gen-animation0keyframe" id="hurray" data-gwd-component-id="hurray">
           <canvas width="3" height="338" class="gwd-canvas-hmw8 gwd-gen-fd8sgwdanimation gwd-gen-fd8sgwdanimation-gen-animation0keyframe" data-gwd-component-id="c_nt6g2psr"></canvas>
         </div>
+        <img class="spinner" src="/img/spinner.gif" />
       </div>
     </div>
   
