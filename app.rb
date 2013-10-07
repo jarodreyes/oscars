@@ -3,6 +3,7 @@ require "sinatra"
 require "sinatra/multi_route"
 require "data_mapper"
 require "twilio-ruby"
+require 'twilio-ruby/rest/messages'
 require "sanitize"
 require "erb"
 require "rotp"
@@ -22,7 +23,7 @@ class VerifiedUser
   property :name, String
   property :phone_number, String, :length => 30
   property :verified, Boolean, :default => false
-  property :send_mms, Enum[ :yes, :no ], :default => :no
+  property :send_mms, Enum[ 'yes', 'no' ], :default => 'no'
 
 end
 DataMapper.finalize
@@ -31,7 +32,8 @@ DataMapper.auto_upgrade!
 before do
   @twilio_number = ENV['TWILIO_NUMBER']
   @client = Twilio::REST::Client.new ENV['TWILIO_ACCOUNT_SID'], ENV['TWILIO_AUTH_TOKEN']
-
+  @mmsclient = @client.accounts.get('AC648d937704b94309822578b85ff1227f')
+  
   if params[:error].nil?
     @error = false
   else
@@ -102,24 +104,30 @@ route :get, :post, '/notify_all' do
   @sex = params[:sex]
   @date = params[:date]
   @weight = params[:weight]
+
   msg = "Jarod and Sarah have very exciting news! At #{@time} on #{@date} a beautiful little #{@sex} named #{@baby_name} was born. Let the celebrations begin!"
   @users.each do |user|
     if user.verified == true
       @phone_number = user.phone_number
       @name = user.name
       if user.send_mms == 'yes'
-        pic = "http://www.topdreamer.com/wp-content/uploads/2013/08/funny_babies_faces.jpg"
+        message = @mmsclient.messages.create(
+          :from => 'TWILIO',
+          :to => @phone_number,
+          :body => "#{@name}! #{msg}",
+          :media_url => "http://www.topdreamer.com/wp-content/uploads/2013/08/funny_babies_faces.jpg"
+        )
+      else
+        message = @client.account.messages.create(
+          :from => @twilio_number,
+          :to => @phone_number,
+          :body => "#{@name}! #{msg}"
+        )
       end
-      message = @client.account.messages.create(
-        :from => @twilio_number,
-        :to => @phone_number,
-        :body => "#{@name}! #{msg}",
-        :media_url => pic
-      )
       puts message.to
     end
   end
-  return 'Yay'
+  erb :hurray
 end
 
 route :get, :post, '/verify' do
