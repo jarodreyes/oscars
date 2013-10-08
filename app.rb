@@ -46,6 +46,10 @@ get "/" do
   haml :index
 end
 
+get "/signup" do
+  haml :signup
+end
+
 get '/gotime' do
   haml :gotime
 end
@@ -56,8 +60,8 @@ get '/notify' do
   end.text
 end
 
-get '/hurray' do
-  erb :hurray
+get '/twilions' do
+  haml :twilions
 end
 
 get '/success' do

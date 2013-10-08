@@ -8,7 +8,7 @@ body {
   line-height:24px;
   background-image:url('/img/bg.gif');
   position: absolute;
-  height: 100%;
+  min-height: 100%;
   width: 100%;
 }
 
@@ -27,6 +27,15 @@ body {
 
 .testing {
   text-align: right;
+}
+.panel {
+  background:rgba(255,255,255,0.3);
+}
+.panel.twilions {
+  text-align: center;
+  h2 {
+    font-family: 'Josefin Sans', sans-serif;
+  }
 }
 
 .hidden {
