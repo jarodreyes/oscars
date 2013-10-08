@@ -1,10 +1,8 @@
 $(document).ready ->
-  console.log 'doing'
   addVerify = =>
     $('.verifyCode').fadeIn(300)
 
   $('#signup').submit (e) ->
-    console.log 'clicked'
     e.preventDefault()
     $.ajax
       type: "POST",
@@ -12,9 +10,6 @@ $(document).ready ->
       data: $('#signup').serialize(),
       success: addVerify(),
     return false
-
-  $('input').change ->
-    console.log 'working'
 
   $('.codeSubmit').click (e) ->
     e.preventDefault()

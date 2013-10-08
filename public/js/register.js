@@ -2,12 +2,10 @@
 $(document).ready(function() {
   var addVerify,
     _this = this;
-  console.log('doing');
   addVerify = function() {
     return $('.verifyCode').fadeIn(300);
   };
   $('#signup').submit(function(e) {
-    console.log('clicked');
     e.preventDefault();
     $.ajax({
       type: "POST",
@@ -16,9 +14,6 @@ $(document).ready(function() {
       success: addVerify()
     });
     return false;
-  });
-  $('input').change(function() {
-    return console.log('working');
   });
   return $('.codeSubmit').click(function(e) {
     var data,
