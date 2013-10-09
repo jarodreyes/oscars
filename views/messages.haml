@@ -2,7 +2,8 @@
   .small-12.small-centered.columns
     .row
       - @messages.each do |message|
-        .alert-box.small-6.large-3.columns
+      .small-6.large-3.columns
+        .panel.radius
           %p= message.name
-          %p= message.body
+          %h5= message.body
           %small= message.time
