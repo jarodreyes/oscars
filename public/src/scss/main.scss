@@ -70,3 +70,28 @@ input.code {
   font-size: 29px;
   padding-top: 200px;
 }
+
+.menu {
+  position:absolute;
+  right:20px;
+  top:20px;
+  a {
+    display:block;
+    width:50px;
+    height:50px;
+    margin:2px;
+    background-repeat:no-repeat;
+  }
+  a.twilions {
+    background-image:url('/img/twilions.png');
+  }
+  a.users {
+    background-image:url('/img/users.png');
+  }
+  a.gotime {
+    background-image:url('/img/gotime.png');
+  }
+  a.kindthings {
+    background-image:url('/img/kindthings.png');
+  }
+}
