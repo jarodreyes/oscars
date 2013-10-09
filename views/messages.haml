@@ -6,4 +6,4 @@
           .panel.radius
             %p= message.name
             %h5= message.body
-            %small= message.time
+            %small= message.time.strftime("%B %d at %I:%M %p")

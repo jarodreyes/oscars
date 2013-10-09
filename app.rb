@@ -118,7 +118,6 @@ end
 
 get '/kindthings' do
   @messages = Message.all
-  p @messages
   haml :messages
 end
 
