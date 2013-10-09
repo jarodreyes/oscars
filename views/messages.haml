@@ -1,7 +1,7 @@
 .row
   .small-12.small-centered.columns
     .row
-      - @message.each do |message|
+      - @messages.each do |message|
         .alert-box.small-6.large-3.columns
           %p= message.name
           %p= message.body

@@ -118,14 +118,12 @@ end
 
 get '/kindthings' do
   @messages = Message.all
-  print @messages
+  p @messages
   haml :messages
 end
 
 get '/users/' do
   @users = VerifiedUser.all
-  print @users
-  print VerifiedUser.all.count
   haml :users
 end
 
@@ -136,7 +134,7 @@ route :get, :post, '/receiver' do
   @time = DateTime.now
 
   # Find the user associated with this number if there is one
-  @messageUser  = VerifiedUser.first(:phone_number => @phone_number)
+  @messageUser = VerifiedUser.first(:phone_number => @phone_number)
 
   # If there is no messageUser lets go ahead and create one
   if @messageUser.nil?
