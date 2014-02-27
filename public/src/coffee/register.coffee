@@ -13,8 +13,11 @@ $(document).ready ->
 
   $('.codeSubmit').click (e) ->
     e.preventDefault()
+    pn = $('input[name="phone_number"]').val()
+    if pn.length <= 10
+      pn = "+1" + pn
     data =
-      'phone_number': $('input[name="phone_number"]').val()
+      'phone_number': pn
       'code': $('input[name="code"]').val()
     $.ajax
       type: "POST",

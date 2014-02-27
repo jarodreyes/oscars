@@ -47,6 +47,7 @@ DataMapper.auto_upgrade!
 before do
   @twilio_number = ENV['TWILIO_NUMBER']
   @client = Twilio::REST::Client.new ENV['TWILIO_ACCOUNT_SID'], ENV['TWILIO_AUTH_TOKEN']
+  puts "num: #{@twilio_number}"
   @mmsclient = @client.accounts.get(ENV['TWILIO_SID'])
   
   if params[:error].nil?
@@ -57,7 +58,7 @@ before do
 
 end
 
-def sendMessage(from, to, body, media = nil)
+def sendMessage(from, to, body, media)
   if media.nil?
     message = @client.account.messages.create(
       :from => from,
@@ -103,9 +104,14 @@ get '/gotime' do
 end
 
 get '/notify' do
-  Twilio::TwiML::Response.new do |r|
-    r.Say 'The baby is Here!'
-  end.text
+  p '//////////////////// --------------------'
+  p ENV['TWILIO_SID']
+  p @client.accounts.get(ENV['TWILIO_SID'])
+  @mmsclient.messages.create(
+    :from => 'TWILIO',
+    :to => '2066505813',
+    :body => "Hi Jarod",
+  )
 end
 
 get '/twilions' do
@@ -131,30 +137,54 @@ route :get, :post, '/receiver' do
   @phone_number = Sanitize.clean(params[:From])
   @body = params[:Body]
   @time = DateTime.now
+  if @phone_number == "+12066505813"
+    @users = VerifiedUser.all
+    @users.each do |user|
+      if user.verified == true
+        @phone_number = user.phone_number
+        @name = user.name
+        @pic = "http://bit.ly/SD12fan"
 
-  # Find the user associated with this number if there is one
-  @messageUser = VerifiedUser.first(:phone_number => @phone_number)
-
-  # If there is no messageUser lets go ahead and create one
-  if @messageUser.nil?
-    # If the user did not send a name assume they are a Twilion
-    @body = 'Twilion' if @body.empty?
-    createUser(@body, @phone_number, 'yes', true)
+        message = @client.account.messages.create(
+            :from => @twilio_number,
+            :to => @phone_number,
+            :body => @body
+          )
+        puts message.to
+      end
+    end
   else
-    # Since the user exists add the message to their profile
-    @messageUser.messages.create(
-      :name => @messageUser.name,
-      :time => @time,
-      :body => @body
-    )
+    # Find the user associated with this number if there is one
+    @messageUser = VerifiedUser.first(:phone_number => @phone_number)
+
+    # If there is no messageUser lets go ahead and create one
+    if @messageUser.nil?
+      # If the user did not send a name assume they are a Twilion
+      @body = 'Twilion' if @body.empty?
+      createUser(@body, @phone_number, 'yes', true)
+    else
+      # Since the user exists add the message to their profile
+      @messageUser.messages.create(
+        :name => @messageUser.name,
+        :time => @time,
+        :body => @body
+      )
+    end
+
   end
 end
 
 # Register a subscriber through the web and send verification code
 route :get, :post, '/register' do
   @phone_number = Sanitize.clean(params[:phone_number])
+  
   if @phone_number.empty?
     redirect to("/?error=1")
+  else
+    if @phone_number.length <= 10
+      string = '+1'
+      @phone_number = string + @phone_number
+    end
   end
 
   begin
@@ -164,7 +194,6 @@ route :get, :post, '/register' do
         :phone_number => @phone_number,
         :send_mms => params[:send_mms]
       )
-
       if user.verified == true
         @phone_number = url_encode(@phone_number)
         redirect to("/verify?phone_number=#{@phone_number}&verified=1")
@@ -173,8 +202,11 @@ route :get, :post, '/register' do
       code = totp.now
       user.code = code
       user.save
-
-      sendMessage(@twilio_number, @phone_number, "Your verification code is #{code}")
+      message = @client.account.messages.create(
+          :from => @twilio_number,
+          :to => @phone_number,
+          :body => "To complete babynotify.me registration. Your verification code is #{code}."
+        )
     end
     erb :register
   rescue
@@ -196,11 +228,17 @@ route :get, :post, '/notify_all' do
     if user.verified == true
       @phone_number = user.phone_number
       @name = user.name
-      @picture_url = "http://www.topdreamer.com/wp-content/uploads/2013/08/funny_babies_faces.jpg"
-      if user.send_mms == 'yes'
-        sendMessage('TWILIO', @phone_number, "Hi #{@name}! #{msg}", @picture_url)
-      else
-        sendMessage(@twilio_number, @phone_number, "Hi #{@name}! #{msg}")
+      @pic = "http://bit.ly/SD12fan"
+
+      messages = ["Hi #{@name}! #{msg}. Picture: #{@pic}", "Mom, Dad and Baby are getting to know each other and aren't available to talk right now. But feel free to respond to this number and they'll get back to you once they're settled at home. In the meantime you can checkout http://losreyeses.tumblr.com/ in the next few days for more pictures."]
+
+      messages.each do |m|
+        message = @client.account.messages.create(
+          :from => @twilio_number,
+          :to => @phone_number,
+          :body => m
+        )
+        puts message.to
       end
     end
   end
@@ -210,7 +248,9 @@ end
 # Endpoint for verifying code was correct
 route :get, :post, '/verify' do
 
-  @phone_number = Sanitize.clean(params[:phone_number])
+  @phone_number = params[:phone_number]
+  puts "/////////////////// pn"
+  puts @phone_number
 
   @code = Sanitize.clean(params[:code])
   user = VerifiedUser.first(:phone_number => @phone_number)
