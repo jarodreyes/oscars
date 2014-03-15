@@ -228,7 +228,7 @@ route :get, :post, '/notify_all' do
     if user.verified == true
       @phone_number = user.phone_number
       @name = user.name
-      @pic = "http://bit.ly/SD12fan"
+      @pic = "http://bit.ly/ElliottReyes"
 
       messages = ["Hi #{@name}! #{msg}. Picture: #{@pic}", "Mom, Dad and Baby are getting to know each other and aren't available to talk right now. But feel free to respond to this number and they'll get back to you once they're settled at home. In the meantime you can checkout http://losreyeses.tumblr.com/ in the next few days for more pictures."]
 
