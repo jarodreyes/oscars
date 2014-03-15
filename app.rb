@@ -143,7 +143,7 @@ route :get, :post, '/receiver' do
       if user.verified == true
         @phone_number = user.phone_number
         @name = user.name
-        @pic = "http://bit.ly/SD12fan"
+        @pic = "http://bit.ly/ElliottReyes"
 
         message = @client.account.messages.create(
             :from => @twilio_number,
