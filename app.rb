@@ -225,21 +225,19 @@ route :get, :post, '/notify_all' do
 
   msg = "Jarod and Sarah have very exciting news! At #{@time} on #{@date} a beautiful little #{@sex} named #{@baby_name} was born. Let the celebrations begin!"
   @users.each do |user|
-    if user.verified == true
-      @phone_number = user.phone_number
-      @name = user.name
-      @pic = "http://bit.ly/ElliottReyes"
+    @phone_number = user.phone_number
+    @name = user.name
+    @pic = "http://bit.ly/ElliottReyes"
 
-      messages = ["Hi #{@name}! #{msg}. Picture: #{@pic}", "Mom, Dad and Baby are getting to know each other and aren't available to talk right now. But feel free to respond to this number and they'll get back to you once they're settled at home. In the meantime you can checkout http://losreyeses.tumblr.com/ in the next few days for more pictures."]
+    messages = ["Hi #{@name}! #{msg}. Picture: #{@pic}", "Mom, Dad and Baby are getting to know each other and aren't available to talk right now. But feel free to respond to this number and they'll get back to you once they're settled at home. In the meantime you can checkout http://losreyeses.tumblr.com/ in the next few days for more pictures."]
 
-      messages.each do |m|
-        message = @client.account.messages.create(
-          :from => @twilio_number,
-          :to => @phone_number,
-          :body => m
-        )
-        puts message.to
-      end
+    messages.each do |m|
+      message = @client.account.messages.create(
+        :from => @twilio_number,
+        :to => @phone_number,
+        :body => m
+      )
+      puts message.to
     end
   end
   erb :hurray
