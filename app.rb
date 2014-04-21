@@ -14,7 +14,7 @@ set :static, true
 set :root, File.dirname(__FILE__)
 
 DataMapper::Logger.new(STDOUT, :debug)
-DataMapper::setup(:default, ENV['DATABASE_URL'] || 'postgres://localhost/baby_notify')
+DataMapper::setup(:default, ENV['DATABASE_URL'] || 'postgres://localhost/jreyes')
 
 class VerifiedUser
   include DataMapper::Resource
@@ -130,6 +130,23 @@ end
 get '/users/' do
   @users = VerifiedUser.all
   haml :users
+end
+
+# Generic webhook to send sms from 'TWILIO'
+route :get, :post, '/sms-hook' do
+  @user = params[:to]
+  if params[:msg].nil?
+    @msg = 'Congrats you have just sent an SMS with just a few lines of code.'
+  else
+    @msg = params[:msg]
+  end
+  message = @mmsclient.messages.create(
+    :from => 'TWILIO',
+    :to => @user,
+    :body => @msg,
+    :media_url => "http://baby-notifier.herokuapp.com/img/sms-pic.png",
+  )
+  puts message.to
 end
 
 # Receive messages twilio app endpoint - inbound
