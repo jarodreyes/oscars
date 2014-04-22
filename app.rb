@@ -133,7 +133,7 @@ get '/users/' do
 end
 
 # Generic webhook to send sms from 'TWILIO'
-route :get, :post, '/sms-hook' do
+get '/sms-hook' do
   @user = params[:to]
   if params[:msg].nil?
     @msg = 'Congrats you have just sent an SMS with just a few lines of code.'
@@ -147,6 +147,7 @@ route :get, :post, '/sms-hook' do
     :media_url => "http://baby-notifier.herokuapp.com/img/sms-pic.png",
   )
   puts message.to
+  halt 200
 end
 
 # Receive messages twilio app endpoint - inbound
