@@ -152,11 +152,9 @@ route :get, :post, '/branded-sms' do
     if deviceList.include?(@body)
       pic = $DEVICES[@body]['url']
       puts pic
-      @msg = 'Thanks for trying out the branded SMS demo. What would you do with MMS?'
       message = @client.account.messages.create(
         :from => 9792726399,
         :to => @phone_number,
-        :body => @msg,
         :media_url => pic,
       )
       puts message.to
