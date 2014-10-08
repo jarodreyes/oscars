@@ -14,7 +14,7 @@ set :static, true
 set :root, File.dirname(__FILE__)
 
 DataMapper::Logger.new(STDOUT, :debug)
-DataMapper::setup(:default, ENV['DATABASE_URL'] || 'postgres://localhost/jreyes')
+DataMapper::setup(:default, ENV['DATABASE_URL'] || 'postgres://postgres:postgres@localhost/jreyes')
 
 class VerifiedUser
   include DataMapper::Resource
@@ -130,6 +130,50 @@ end
 get '/users/' do
   @users = VerifiedUser.all
   haml :users
+end
+
+# Generic webhook to send sms from 'TWILIO'
+route :get, :post, '/branded-sms' do
+  $DEVICES = {
+    "iphone" => {
+      "url" => 'https://s3-us-west-2.amazonaws.com/deved/branded-sms_ios7.png',
+    },
+    "android" => {
+      "url" => 'https://s3-us-west-2.amazonaws.com/deved/branded-sms_android.png',
+    },
+    "windows" => {
+      "url" => 'https://s3-us-west-2.amazonaws.com/deved/branded-sms_windows.png',
+    }
+  }
+  @phone_number = Sanitize.clean(params[:From])
+  @body = params[:Body].downcase
+  deviceList = ($DEVICES.keys).join(',')
+  begin
+    if deviceList.include?(@body)
+      pic = $DEVICES[@body]['url']
+      puts pic
+      @msg = 'Thanks for trying out the branded SMS demo. What would you do with MMS?'
+      message = @client.account.messages.create(
+        :from => 9792726399,
+        :to => @phone_number,
+        :body => @msg,
+        :media_url => pic,
+      )
+      puts message.to
+    else
+      @msg = "What kind of device do you have? Reply: 'iphone', 'android', or 'windows' to receive a branded SMS"
+      message = @client.account.messages.create(
+        :from => 9792726399,
+        :to => @phone_number,
+        :body => @msg
+      )
+      puts message.to
+      response.text
+    end
+  rescue
+    puts "something went wrong"
+  end
+  halt 200
 end
 
 # Generic webhook to send sms from 'TWILIO'
