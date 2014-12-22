@@ -191,9 +191,11 @@ end
 
 # Receive messages twilio app endpoint - inbound
 route :get, :post, '/christmas' do
+  @xmas_number = ENV['XMAS_NUMBER']
   @phone_number = Sanitize.clean(params[:From])
   @body = params[:Body]
   @message = "Congratulations and Happy Holidays! You are receiving this message because you found the #12HacksOfChristmas easter-egg. For your efforts you will be greatly rewarded this winter. If you'd like to receive your prize, simply respond with your name and mailing address."
+  sendMessage @xmas_number, @phone_number, @message, nil
 end
 
 # Receive messages twilio app endpoint - inbound
