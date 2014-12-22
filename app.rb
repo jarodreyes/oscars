@@ -132,8 +132,10 @@ get '/users/' do
   haml :users
 end
 
-# Generic webhook to send sms from 'TWILIO'
+# http://baby-notifier.herokuapp.com/branded-sms
+# Branded SMS Webhook, first asks for device, then sends MMS
 route :get, :post, '/branded-sms' do
+  @client = Twilio::REST::Client.new ENV['TWILIO_ACCOUNT_SID'], ENV['TWILIO_AUTH_TOKEN']
   $DEVICES = {
     "iphone" => {
       "url" => 'https://s3-us-west-2.amazonaws.com/deved/branded-sms_ios7.png',
@@ -148,28 +150,23 @@ route :get, :post, '/branded-sms' do
   @phone_number = Sanitize.clean(params[:From])
   @body = params[:Body].downcase
   deviceList = ($DEVICES.keys).join(',')
-  begin
-    if deviceList.include?(@body)
-      pic = $DEVICES[@body]['url']
-      puts pic
-      message = @client.account.messages.create(
-        :from => 9792726399,
-        :to => @phone_number,
-        :media_url => pic,
-      )
-      puts message.to
-    else
-      @msg = "What kind of device do you have? Reply: 'iphone', 'android', or 'windows' to receive a branded SMS"
-      message = @client.account.messages.create(
-        :from => 9792726399,
-        :to => @phone_number,
-        :body => @msg
-      )
-      puts message.to
-      response.text
-    end
-  rescue
-    puts "something went wrong"
+  if deviceList.include?(@body)
+    pic = $DEVICES[@body]['url']
+    puts pic
+    message = @client.account.messages.create(
+      :from => 9792726399,
+      :to => @phone_number,
+      :media_url => pic,
+    )
+    puts message.to
+  else
+    @msg = "What kind of device do you have? Reply: 'iphone', 'android', or 'windows' to receive a branded SMS"
+    message = @client.account.messages.create(
+      :from => 9792726399,
+      :to => @phone_number,
+      :body => @msg
+    )
+    puts message.to
   end
   halt 200
 end
@@ -191,6 +188,21 @@ get '/sms-hook' do
   puts message.to
   halt 200
 end
+
+# Receive messages twilio app endpoint - inbound
+route :get, :post, '/christmas' do
+  @phone_number = Sanitize.clean(params[:From])
+  @body = params[:Body]
+  @message = "Congratulations and Happy Holidays! You are receiving this message because you found the #12HacksOfChristmas easter-egg. For your efforts you will be greatly rewarded this winter. If you'd like to receive your prize, simply respond with your name and mailing address."
+end
+
+# Receive messages twilio app endpoint - inbound
+route :get, :post, '/christmas-voice' do
+  Twilio::TwiML::Response.new do |r|
+    r.Say "Congratulations! You are receiving this message because you found the twelve hacks of christmas easter-egg. For your efforts you will be greatly rewarded this winter. If you'd like to receive your prize, please send an SMS to this number with your name and mailing address. Happy Holidays! ", loop: 2, voice: 'alice', language: 'en-GB'
+  end.text
+end
+
 
 # Receive messages twilio app endpoint - inbound
 route :get, :post, '/receiver' do
