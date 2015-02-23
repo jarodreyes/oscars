@@ -13,7 +13,7 @@
     <script type="text/javascript">
       function updatePoints(start) {
         $.get('/leaderboard.json', function(data) {
-          console.log(data)
+          $('.leaderboardSource').html('');
           for (team in data) {
             console.log(team);
             num = team;
@@ -25,7 +25,6 @@
           $('.leaderboard').quicksand( $('.leaderboardSource > li'), {
             atomic: true,
             retainExisting: false});
-          $('.leaderboardSource').html('');
         });
 
       }

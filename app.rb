@@ -43,6 +43,10 @@ DataMapper.auto_upgrade!
 before do
 
   puts 'hello'
+
+  Pusher.app_id = ENV["OSCAR_APP_ID"]
+  Pusher.key = ENV["OSCAR_KEY"]
+  Pusher.secret = ENV["OSCAR_SECRET"]
 end
 
 get "/" do
@@ -84,17 +88,18 @@ end
 # http://baby-notifier.herokuapp.com/branded-sms
 # Branded SMS Webhook, first asks for device, then sends MMS
 route :get, :post, '/score-points' do
+  p "$$$$$$$$$$$$$$ CATEGORY"
   @category = params[:category]
   @winner = params[:winner]
+  p @category
 
   @users = User.all
 
   @users.each do |user|
     points = user.points
     userVote = user.votes.first(:category => @category)
-    p userVote
     if userVote.first == @winner
-      p "$$$$$$$$$$$$$$ POINTS"
+      
       points = points + 5
       p points
     elsif userVote.second == @winner
@@ -103,6 +108,9 @@ route :get, :post, '/score-points' do
     user.update(:points => points)
     user.save
   end
+  Pusher['oscars'].trigger('winner', {
+    message: 'hello world'
+  })
   status 200
 end
 
