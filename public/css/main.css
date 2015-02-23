@@ -7,6 +7,18 @@ body {
   min-height: 100%;
   width: 100%; }
 
+.leaderboardSource {
+  border-radius:3px;
+  padding: 12px;
+  span {
+    display:inline-block;
+  }
+  span.badge {
+    padding:2px 12px;
+    background:white;
+  }
+}
+
 .logo {
   text-align: center;
   display: block;
